@@ -1,4 +1,3 @@
-import traceback
 
 """
 For your homework this week, you'll be creating a wsgi application of
@@ -42,6 +41,7 @@ To submit your homework:
 
 
 """
+import traceback
 
 
 def add(*args):
@@ -134,8 +134,12 @@ def application(environ, start_response):
         if path is None:
             raise NameError
         func, args = resolve_path(path)
+        # if func == 'divide' and args[1] == 0:
         body = func(*args)
         status = "200 OK"
+    except ZeroDivisionError:
+        status = "400 Bad Request"
+        body = "<h1> Cannot Divide by Zero!</h1>"
     except NameError:
         status = "404 Not Found"
         body = "<h1>Not Found</h1>"
@@ -147,9 +151,7 @@ def application(environ, start_response):
         headers.append(('Content-length', str(len(body))))
         start_response(status, headers)
         return [body.encode('utf8')]
-    #
-    # TODO (bonus): Add error handling for a user attempting
-    # to divide by zero.
+
 
 
 if __name__ == '__main__':
